@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <title>Модуль тестування пароля</title>
+  <link type="text/css" href="index_files/pwdmeter.css" media="screen" rel="stylesheet" />
+  <script src="index_files/jquery.min.js"></script>
+  <script src="index_files/pwdmeter.js"></script>
+  <script>
+    $(document).ready(function () {
+      let oPass = $("#pwdPassword");
+      oPass.passStrength("#user_id_adv");
+
+      // сховати/показати пароль
+      $("#mask").click(function togPwdMask() {
+        const oPwd = $("#pwdPassword");
+        const oTxt = $("#passwordText");
+        const oMask = $("#mask");
+        if (oMask.attr("checked")) {
+          oPwd.val(oTxt.val());
+          oPwd.removeClass("hide");
+          oTxt.addClass("hide");
+          oPass = oPwd; // пароль видно
+        } else {
+          oTxt.val(oPwd.val());
+          oPwd.addClass("hide");
+          oTxt.removeClass("hide");
+          oPass = oTxt; // пароль не видно
+        }
+        oPass.passStrength("#user_id_adv");
+      })
+    });
+  </script>
+</head>
+
+<body>
+  <div id="content">
+    <form id="formPassword" name="formPassword">
+      <table cellpadding="5" cellspacing="1" border="0">
+        <tr>
+          <th colspan="2" class="centerText">Модуль тестування пароля</th>
+          <th class="centerText">Мінімальні вимоги</th>
+        </tr>
+        <tr>
+          <th>Логін:</th>
+          <td>
+            <input type="text" id="user_id_adv" name="user_name" autocomplete="off" />
+          </td>
+          <td rowspan="5">
+            <ul>
+              <li>Мінімальна довжина - 8 символів</li>
+              <li>Містить наступні 3 з 4 пункту:<br />
+                - заголовні літери (A, B, C ...)<br />
+                - прописні літери (d, e, f ...)<br />
+                - цифри (0, 9, 8 ...)<br />
+                - спеціальні символи (#, $, ", - ...)<br />
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Пароль:</th>
+          <td>
+            <input type="password" id="pwdPassword" name="pwdPassword" autocomplete="off" />
+            <input type="text" id="passwordText" name="passwordText" autocomplete="off" class="hide" />
+          </td>
+        </tr>
+        <tr>
+          <th>Не показувати:</th>
+          <td><input type="checkbox" id="mask" name="mask" value="1" checked="checked" /></td>
+        </tr>
+        <tr>
+          <th>Оцінка пароля:</th>
+          <td>
+            <div id="scorebarBorder">
+              <div id="score">0%</div>
+              <div id="scorebar">&nbsp;</div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>Складність:</th>
+          <td>
+            <div id="complexity">/---------/</div>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Позитивна оцінка -->
+      <table cellpadding="5" cellspacing="1" border="0">
+        <tr>
+        <tr>
+          <th colspan="2">Позитивна оцінка</th>
+          <th class="centerText">Тип</th>
+          <th class="centerText">Коефіцієнт</th>
+          <th class="centerText">Значення</th>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numLength" class="fail">&nbsp;</div>
+          </td>
+          <td width="94%">Кількість символів більше 4</td>
+          <td width="1%" class="centerText">Змiн</td>
+          <td width="1%" class="centerText italic">+(n*4)</td>
+          <td width="1%">
+            <div id="numLength" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numNumber" class="fail">&nbsp;</div>
+          </td>
+          <td width="94%">Кількість цифр більше 3</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">+5</td>
+          <td width="1%">
+            <div id="numNumber" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numSign" class="fail">&nbsp;</div>
+          </td>
+          <td width="94%">Кількість спеціальних символів більше 2</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">+5</td>
+          <td width="1%">
+            <div id="numSign" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numLit_type" class="fail">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль містить заголовні і прописні літери</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">+10</td>
+          <td width="1%">
+            <div id="numLit_type" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numLit_num" class="fail">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль містить літери та цифри</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">+15</td>
+          <td width="1%">
+            <div id="numLit_num" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numNum_sign" class="fail">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль містить цифри і спеціальні символи</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">+15</td>
+          <td width="1%">
+            <div id="numNum_sign" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numLit_sign" class="fail">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль містить літери та спеціальні символи</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">+15</td>
+          <td width="1%">
+            <div id="numLit_sign" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+      </table>
+
+      <!-- Негативна оцiнка -->
+      <table cellpadding="5" cellspacing="1" border="0">
+        <tr>
+        <tr>
+          <th colspan="2">Негативна оцiнка</th>
+          <th class="centerText">Тип</th>
+          <th class="centerText">Коефіцієнт</th>
+          <th class="centerText">Значення</th>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numPart_user" class="pass">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль міститься в логіні або навпаки</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">-30</td>
+          <td width="1%">
+            <div id="numPart_user" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numTast" class="pass">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль є частиною послідовності літер на клавіатурі</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">-20</td>
+          <td width="1%">
+            <div id="numTast" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_invTast" class="pass">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль є зворотною частиною послідовності літер на клавіатурі</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">-20</td>
+          <td width="1%">
+            <div id="invTast" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_vertTast" class="pass">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль є частиною вертикальної послідовності літер на клавіатурі</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">-15</td>
+          <td width="1%">
+            <div id="vertTast" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_invvertTast" class="pass">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль є зворотною частиною вертикальної послідовності літер на клавіатурі</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">-15</td>
+          <td width="1%">
+            <div id="invvertTast" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_sahTast" class="pass">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль є частиною шахового розташування літер на клавіатурі</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">-15</td>
+          <td width="1%">
+            <div id="sahTast" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_invsahTast" class="pass">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль є зворотною частиною шахового розташування літер на клавіатурі</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">-15</td>
+          <td width="1%">
+            <div id="invsahTast" class="box">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="1%">
+            <div id="div_numOnly_ln" class="pass">&nbsp;</div>
+          </td>
+          <td width="94%">Пароль містить тільки літери та цифри</td>
+          <td width="1%" class="centerText">Конст</td>
+          <td width="1%" class="centerText italic">-10</td>
+          <td width="1%">
+            <div id="numOnly_ln" class="box">&nbsp;</div>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Опис параметрів -->
+      <table id="tablePwdNotes" cellpadding="5" cellspacing="1" border="0">
+        <tr>
+          <th>Опис параметрів</th>
+        </tr>
+        <tr>
+          <td>
+            &bull; <strong>Конст:</strong> оцінка пароля змінюється на постійну величину.<br />
+            &bull; <strong>Змiн:</strong> оцінка пароля змінюється на змінну величину.<br />
+          </td>
+        </tr>
+      </table>
+    </form>
+</body>
+
+</html>
